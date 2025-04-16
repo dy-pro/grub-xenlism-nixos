@@ -10,17 +10,18 @@ Add this to your `flake.nix` inputs:
 
 ```nix
 inputs.grub-xenlism.url = "github:dy-pro/grub-xenlism-nixos";
+```
 
-
-#### Then in your NixOS configuration:
+Then in your NixOS configuration:
 
 ```nix
 boot.loader.grub = {
   enable = true;
   theme = "${inputs.grub-xenlism.packages.${system}.default}/grub/themes/xenlism";
 };
+```
+### `flake.nix`
 
-#### `flake.nix`
 ```nix
 {
   description = "Xenlism GRUB theme packaged for NixOS flakes";
@@ -29,4 +30,4 @@ boot.loader.grub = {
     packages.x86_64-linux.default = import ./default.nix;
   };
 }
-
+```
