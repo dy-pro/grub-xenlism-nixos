@@ -1,32 +1,20 @@
 {
-  description = "Xenlism GRUB theme for NixOS";
+  description = "Xenlism GRUB Theme for NixOS";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";  
+  outputs = { self, nixpkgs }: {
+    packages.x86_64-linux.default = 
+      let 
+        pkgs = import nixpkgs { system = "x86_64-linux"; };
+      in
+        pkgs.stdenv.mkDerivation {
+          pname = "xenlism-grub-theme";
+          version = "1.0";
+          src = ./Xenlism-Nixos;
 
-  outputs = { self, nixpkgs }: let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs { inherit system; };
-    theme = pkgs.stdenv.mkDerivation {
-      name = "xenlism-theme";
-      src = ./.;
-      installPhase = ''
-        mkdir -p $out/grub/themes
-        cp -r xenlism $out/grub/themes/
-      '';
-    };
-  in {
-    packages.${system}.default = theme;
-      
-    nixosModules.default = { config, lib, ... }: {
-      config = {
-        boot.loader.grub = {
-          extraFiles = {
-            "grub/themes/xenlism/theme.txt" = "${theme}/grub/themes/xenlism/theme.txt";
-            "grub/themes/xenlism/background.png" = "${theme}/grub/themes/xenlism/background.png";
-          };
-          theme = "/grub/themes/xenlism/theme.txt";
+          installPhase = ''
+            mkdir -p $out/grub/themes
+            cp -r $src $out/grub/themes/xenlism
+          '';
         };
-      };
-    };
   };
 }
