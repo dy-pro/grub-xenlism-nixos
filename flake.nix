@@ -17,7 +17,7 @@
   in {
     packages.${system}.default = theme;
       
-    nixosModules.default = { config, ... }: {
+    nixosModules.default = { config, lib, ... }: {
       config = {
         boot.loader.grub = {
           extraFiles = {
