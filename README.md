@@ -1,33 +1,47 @@
 # grub-xenlism-nixos
 
-🎨 A GRUB theme for NixOS using the beautiful Xenlism theme, with a custom Nix flake wrapper.
+🎨 A GRUB theme for NixOS using the beautiful Xenlism theme.
 
 Original theme by [Xenlism](https://github.com/xenlism).
 
 ## Usage
 
-Add this to your `flake.nix` inputs:
-
-```nix
-inputs.grub-xenlism.url = "github:dy-pro/grub-xenlism-nixos";
-```
+Clone this repo to your project theme. Example: /etc/nixos/themes/xenlism
 
 Then in your NixOS configuration:
 
 ```nix
+{ inputs, config, grub-theme, ... }:
+
 boot.loader.grub = {
   enable = true;
-  theme = "${inputs.grub-xenlism.packages.${system}.default}/grub/themes/xenlism";
+  theme = "${grub-theme}/grub/themes/xenlism";
 };
 ```
-### `flake.nix`
+### `/etc/nixos/flake.nix`
 
 ```nix
 {
-  description = "Xenlism GRUB theme packaged for NixOS flakes";
+  description = "Xenlism GRUB theme packaged for NixOS";
 
-  outputs = { self }: {
-    packages.x86_64-linux.default = import ./default.nix;
+  outputs = { self, nixpkgs, ... }@inputs:
+  let
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
+  in {
+    nixosConfigurations.yourHost = nixpkgs.lib.nixosSystem {
+      inherit system;
+
+      specialArgs = {
+        grub-theme = import ./themes/xenlism { 
+	 inherit (pkgs) stdenv; 
+        };
+      };
+
+      modules = [
+        ./configuration.nix
+      ];
+    };
   };
 }
 ```
